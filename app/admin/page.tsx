@@ -1,70 +1,52 @@
+"use client"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-    Activity,
-    CreditCard,
-    DollarSign,
-    Users,
-} from "lucide-react"
+import { Theme } from "@/interfaces";
+import { useEffect, useState } from "react";
+import { ADMIN_CHART_DATA, ADMIN_DATA } from "@/constants";
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 export default function AdminPage() {
+    const subdomain = window.location.hostname.split(".")[0];
+    const [styles, setStyles] = useState<Theme>();
+
+    useEffect(() => {
+        fetch(`/api/theme/${subdomain}`).then((res) => res.json()).then((data) => {
+            console.log(data)
+            setStyles(data);
+        });
+    }, [subdomain])
+
     return (
-        <div className="px-80 pt-20">
-            <h1 className="text-4xl pb-10">Welcome to your dashboard!</h1>
+        <div style={{ backgroundColor: styles?.palette.primaryForeground }} className="pb-20 h-screen w-full px-[30vw] pt-20">
+            <h1 className="text-5xl text-center font-bold pb-10" style={{ color: styles?.palette.primary }}>Welcome to your dashboard</h1>
             <div className="grid gap-20 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
-                <Card x-chunk="dashboard-01-chunk-0">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Total Revenue
-                        </CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">$45,231.89</div>
-                        <p className="text-xs text-muted-foreground">
-                            +20.1% from last month
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-1">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Subscriptions
-                        </CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">+2350</div>
-                        <p className="text-xs text-muted-foreground">
-                            +180.1% from last month
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-2">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Sales</CardTitle>
-                        <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">+12,234</div>
-                        <p className="text-xs text-muted-foreground">
-                            +19% from last month
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card x-chunk="dashboard-01-chunk-3">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Active Now</CardTitle>
-                        <Activity className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">+573</div>
-                        <p className="text-xs text-muted-foreground">
-                            +201 since last hour
-                        </p>
-                    </CardContent>
-                </Card>
+                {ADMIN_DATA.map((data, index) => (
+                    <Card key={data.id} x-chunk={`dashboard-01-chunk-${index}`} className="border border-slate-400">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">
+                                {data.title}
+                            </CardTitle>
+                            <data.icon className="h-4 w-4 text-muted-foreground" style={{ color: styles?.palette.primary }} />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold" style={{ color: styles?.palette.primary }}>{data.value}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {data.percentage}
+                            </p>
+                        </CardContent>
+                    </Card>
+                ))}
+            </div>
+            <div className="mt-10 h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={ADMIN_CHART_DATA}>
+                        <XAxis dataKey="label" />
+                        <YAxis />
+                        {/* <CartesianGrid strokeDasharray="3 3" /> */}
+                        <Bar dataKey="goal" fill={styles?.palette.primary} />
+                    </BarChart>
+                </ResponsiveContainer>
             </div>
         </div>
-
     );
 }
