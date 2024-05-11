@@ -33,10 +33,10 @@ export default async function middleware(req: NextRequest) {
     );
   }
 
-  // rewrites for app pages
-  if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+  // rewrites for blogs pages
+  if (hostname == `blogs.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
     return NextResponse.rewrite(
-      new URL(`/app${path === "/" ? "" : path}`, req.url),
+      new URL(`/blogs${path === "/" ? "" : path}`, req.url),
     );
   }
   
