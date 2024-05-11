@@ -7,15 +7,15 @@ import { Theme } from "@/interfaces";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Blogs() {
-    const subdomain = useMemo(() => window.location.hostname.split(".")[0], []);
     const [styles, setStyles] = useState<Theme>();
-
+    
     // Fetch theme data
     const handleFetch = useCallback(async () => {
+        const subdomain = typeof window !== 'undefined' ? window.location.hostname.split('.')[0] : '';
         const res = await fetch(`/api/theme/${subdomain}`);
         const data = await res.json();
         setStyles(data);
-    }, [subdomain]);
+    }, []);
 
     useEffect(() => {
         handleFetch();
@@ -42,6 +42,7 @@ export default function Blogs() {
                                 <div className="group relative mx-auto h-100 w-auto overflow-hidden sm:h-150 lg:rounded-xl">
                                     <BlurImage
                                         alt={"Image"}
+                                        blurDataURL={""}
                                         className="h-full w-full object-cover group-hover:scale-105 group-hover:duration-300"
                                         width={600}
                                         height={300}

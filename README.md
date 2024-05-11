@@ -39,6 +39,13 @@ git clone https://github.com/Kartik1110/mutitenant-nextjs.git
 
 2. **Run Development Server**: Start the development server to preview the applications locally.
 
-```
+```bash
 npm run dev
+```
+
+## Starting the application using docker
+- Run the following command to start the application using docker.
+
+```bash
+docker-compose up
 ```

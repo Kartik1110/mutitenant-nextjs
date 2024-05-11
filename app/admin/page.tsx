@@ -6,15 +6,15 @@ import { ADMIN_CHART_DATA, ADMIN_DATA } from "@/constants";
 import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
 
 export default function AdminPage() {
-    const subdomain = useMemo(() => window.location.hostname.split(".")[0], []);
     const [styles, setStyles] = useState<Theme>();
 
     // Fetch theme data
     const handleFetch = useCallback(async () => {
+        const subdomain = typeof window !== 'undefined' ? window.location.hostname.split('.')[0] : '';
         const res = await fetch(`/api/theme/${subdomain}`);
         const data = await res.json();
         setStyles(data);
-    }, [subdomain]);
+    }, []);
 
     useEffect(() => {
         handleFetch();
