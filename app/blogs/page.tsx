@@ -4,21 +4,22 @@ import BlurImage from "@/components/ui/blur-image";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { BLOG_DATA } from "@/constants";
 import { Theme } from "@/interfaces";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function Blogs() {
-    const subdomain = window.location.hostname.split(".")[0];
+    const subdomain = useMemo(() => window.location.hostname.split(".")[0], []);
     const [styles, setStyles] = useState<Theme>();
 
+    // Fetch theme data
+    const handleFetch = useCallback(async () => {
+        const res = await fetch(`/api/theme/${subdomain}`);
+        const data = await res.json();
+        setStyles(data);
+    }, [subdomain]);
+
     useEffect(() => {
-        fetch(`/api/theme/${subdomain}`).then((res) => res.json()).then((data) => {
-            console.log(data)
-            setStyles(data);
-        }
-        );
-    }, [subdomain])
-
-
+        handleFetch();
+    }, [handleFetch]);
 
     return (
         <div style={{ backgroundColor: styles?.palette.secondaryForeground, color: styles?.palette.secondary }}
@@ -26,7 +27,7 @@ export default function Blogs() {
             <h1 className="text-5xl text-center font-bold">Blogs</h1>
 
             <div>
-                {BLOG_DATA.map((data, index) => (
+                {BLOG_DATA.map((data) => (
                     <Card key={data.id} x-chunk="dashboard-01-chunk-0" className="flex flex-row my-10">
                         <CardHeader className="max-w-[50%] flex flex-col items-center justify-evenly space-y-0">
                             <CardTitle className="text-4xl font-medium">
@@ -41,7 +42,6 @@ export default function Blogs() {
                                 <div className="group relative mx-auto h-100 w-auto overflow-hidden sm:h-150 lg:rounded-xl">
                                     <BlurImage
                                         alt={"Image"}
-                                        blurDataURL={""}
                                         className="h-full w-full object-cover group-hover:scale-105 group-hover:duration-300"
                                         width={600}
                                         height={300}
